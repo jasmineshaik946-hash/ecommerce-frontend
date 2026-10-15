@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nova Mart - Products</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header id="header"></header>
+<div class="container">
+  <h2 class="section">Browse Categories</h2>
+  <div class="cats" id="cats"></div>
+  <h2 class="section" id="title">All Products</h2>
+  <div class="grid" id="grid"></div>
+</div>
+<script src="app.js"></script>
+<script>
+  const q = new URLSearchParams(location.search);
+  const id = q.get("id"), name = q.get("name");
+  renderHeader(); renderCategories(id);
+  document.getElementById("title").textContent = name || "All Products";
+  loadProducts(id ? PRODUCTS_BY_CATEGORY_URL(id) : PRODUCTS_URL, "grid");
+</script>
+</body></html>

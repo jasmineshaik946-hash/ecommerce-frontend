@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaMart - Sign In</title>
+  <style>
+    :root {
+      --primary-color: #0d6efd;
+      --primary-hover: #0b5ed7;
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-color: #212529;
+      --border-color: #e9ecef;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex; flex-direction: column; min-height: 100vh;
+    }
+    .auth-container {
+      max-width: 420px; width: 100%; margin: 60px auto; padding: 30px;
+      background-color: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 12px; box-shadow: var(--shadow);
+    }
+    .auth-header { text-align: center; margin-bottom: 25px; }
+    .auth-header h2 { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
+    .form-group input {
+      width: 100%; padding: 10px 14px; font-size: 0.95rem; border: 1px solid var(--border-color);
+      border-radius: 6px; outline: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus { border-color: var(--primary-color); }
+    .btn-submit {
+      width: 100%; padding: 10px; background-color: var(--primary-color); color: #fff;
+      border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer;
+    }
+    .btn-submit:hover { background-color: var(--primary-hover); }
+    .auth-footer { text-align: center; margin-top: 20px; font-size: 0.9rem; color: #6c757d; }
+    .auth-footer a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div class="auth-container">
+    <div class="auth-header">
+      <h2>Sign In to NovaMart</h2>
+      <p style="color:#6c757d; font-size: 0.9rem;">Welcome back! Enter your details below.</p>
+    </div>
+
+    <form id="signinForm" onsubmit="handleSignIn(event)">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="name@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+      </div>
+
+      <button type="submit" class="btn-submit">Sign In</button>
+    </form>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="signup.html">Sign Up</a> | <a href="index.html">Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    const AUTH_URL = 'http://localhost:8092/rest/api/v1/auth';
+
+    async function handleSignIn(event) {
+      event.preventDefault();
+      const payload = {
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+      };
+
+      try {
+        const response = await fetch(`${AUTH_URL}/signin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.message || 'Sign in failed');
+          return;
+        }
+        localStorage.setItem('novamart_user', JSON.stringify(data));
+        alert(`Welcome back, ${data.fullName}!`);
+        window.location.href = 'index.html';
+      } catch (err) {
+        console.error(err);
+        alert('Cannot reach the server. Is the Spring Boot app running on port 8092?');
+      }
+    }
+  </script>
+</body>
+</html>
